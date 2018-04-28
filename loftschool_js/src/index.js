@@ -62,10 +62,8 @@ function returnFnResult(fn) {
  */
 
 function returnCounter(p1) {
-  //p1 = p1 || 0;
   var n1 = p1 || 0;
   return function f1(){
-    //n1++;
     return ++n1;
   }
 }

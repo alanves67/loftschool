@@ -8,7 +8,7 @@ import {
     returnFirstArgument,
     returnFnResult
 } from '../src/index';
-import { sumWithDefaults } from "../src";
+//import { sumWithDefaults } from "../src";
 
 describe('ДЗ 1 - функции', () => {
     describe('returnFirstArgument', () => {
