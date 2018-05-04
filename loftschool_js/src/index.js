@@ -1,88 +1,158 @@
-/* ДЗ 2 - работа с массивами и объеектами */
+/* ДЗ 3 - работа с исключениями и отладчиком */
 
 /*
  Задание 1:
 
- Напишите аналог встроенного метода forEach для работы с массивами
- Посмотрите как работает forEach и повторите это поведение для массива, который будет передан в параметре array
+ 1.1: Функция принимает массив и фильтрующую фукнцию и должна вернуть true или false
+ Функция должна вернуть true только если fn вернула true для всех элементов массива
+
+ 1.2: Необходимо выбрасывать исключение в случаях:
+   - array не массив или пустой массив (с текстом "empty array")
+   - fn не является функцией (с текстом "fn is not a function")
+
+ Зарпещено использовать встроенные методы для работы с массивами
+
+ Пример:
+   isAllTrue([1, 2, 3, 4, 5], n => n < 10) // вернет true
+   isAllTrue([100, 2, 3, 4, 5], n => n < 10) // вернет false
  */
-function forEach(array, fn) {
-  for (var i = 0; i < array.length; i++) {
-    fn(array[i], i, array);
+function isAllTrue(array, fn) {
+  if( !Array.isArray(array) || array.length == 0 ){
+    throw new Error('empty array')
   }
+  if( typeof(fn) != "function" ){
+    throw new Error('fn is not a function')
+  } 
+  for (var i = 0; i < array.length; i++) {
+    if(!fn(array[i])){
+      return false;
+    }
+  }
+  return true;
 }
 
 /*
  Задание 2:
 
- Напишите аналог встроенного метода map для работы с массивами
- Посмотрите как работает map и повторите это поведение для массива, который будет передан в параметре array
+ 2.1: Функция принимает массив и фильтрующую фукнцию и должна вернуть true или false
+ Функция должна вернуть true если fn вернула true хотя бы для одного из элементов массива
+
+ 2.2: Необходимо выбрасывать исключение в случаях:
+   - array не массив или пустой массив (с текстом "empty array")
+   - fn не является функцией (с текстом "fn is not a function")
+
+ Зарпещено использовать встроенные методы для работы с массивами
+
+ Пример:
+   isSomeTrue([1, 2, 30, 4, 5], n => n > 20) // вернет true
+   isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
-function map(array, fn) {
-  var o1 = [];
-  for (var i = 0; i < array.length; i++) {
-    o1.push(fn(array[i], i, array));
+function isSomeTrue(array, fn) {
+  if( !Array.isArray(array) || array.length==0 ){
+    throw new Error('empty array')
   }
-  return o1;
+  if( typeof(fn) != "function" ){
+    throw new Error('fn is not a function')
+  } 
+  for (var i = 0; i < array.length; i++) {
+    if( fn(array[i]) ){
+      return true;
+    }
+  }
+  return false;
 }
 
 /*
  Задание 3:
 
- Напишите аналог встроенного метода reduce для работы с массивами
- Посмотрите как работает reduce и повторите это поведение для массива, который будет передан в параметре array
+ 3.1: Функция принимает заранее неизветсное количество аргументов, первым из которых является функция fn
+ Функция должна поочередно запустить fn для каждого переданного аргумента (кроме самой fn)
+
+ 3.2: Функция должна вернуть массив аргументов, для которых fn выбросила исключение
+
+ 3.3: Необходимо выбрасывать исключение в случаях:
+   - fn не является функцией (с текстом "fn is not a function")
  */
-function reduce(array, fn, initial) {  
-  var returnVal = initial, i = 0;
-  if (returnVal === undefined){
-    returnVal = array[0];
-    i++;
+function returnBadArguments(fn) {
+  if( typeof(fn) != "function" ){
+    throw new Error('fn is not a function')
+  } 
+  var [f1, ...arg] = arguments;
+  var a1 = [];
+  for (var i in arg){
+    try{
+      fn(arg[i]);
+    }catch(e){
+      a1.push(arg[i]);
+    }
   }
-  for (i; i < array.length; i++) {
-    returnVal = fn.call(null, returnVal, array[i], i, array);
-  }
-  return returnVal;
+  return a1;
 }
 
 /*
  Задание 4:
 
- Функция должна перебрать все свойства объекта, преобразовать их имена в верхний регистр и вернуть в виде массива
+ 4.1: Функция имеет параметр number (по умолчанию - 0)
 
- Пример:
-   upperProps({ name: 'Сергей', lastName: 'Петров' }) вернет ['NAME', 'LASTNAME']
+ 4.2: Функция должна вернуть объект, у которого должно быть несколько методов:
+   - sum - складывает number с переданными аргументами
+   - dif - вычитает из number переданные аргументы
+   - div - делит number на первый аргумент. Результат делится на следующий аргумент (если передан) и так далее
+   - mul - умножает number на первый аргумент. Результат умножается на следующий аргумент (если передан) и так далее
+
+ Количество передаваемых в методы аргументов заранее неизвестно
+
+ 4.3: Необходимо выбрасывать исключение в случаях:
+   - number не является числом (с текстом "number is not a number")
+   - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
-function upperProps(obj) {
-  var o1 = [];
-  for (var name in obj){
-    o1.push(name.toUpperCase());
+function calculator() {
+  var n1 = arguments[0];
+  n1 = n1 || 0;
+  if(!isFinite(n1)){
+    throw new Error('number is not a number');
+  }
+  var o1 = {
+    sum: function (){
+      var n2 = n1;
+      for (var i in arguments){
+        n2 = n2 + arguments[i];
+      }
+      return n2;
+    },
+    dif: function (){
+      var n2 = n1;
+      for (var i in arguments){
+        n2 = n2 - arguments[i];
+      }
+      return n2;
+    },
+    div: function (){
+      var n2 = n1;
+      for (var i in arguments){
+        if (arguments[i] == 0){
+          throw new Error('division by 0');
+        }
+        n2 = n2 / arguments[i];
+      }
+      return n2;
+    }, 
+    mul: function (){
+      var n2 = n1;
+      for (var i in arguments){
+        n2 = n2 * arguments[i];
+      }
+      return n2;
+    },    
   }
   return o1;
 }
 
-/*
- Задание 5 *:
-
- Напишите аналог встроенного метода slice для работы с массивами
- Посмотрите как работает slice и повторите это поведение для массива, который будет передан в параметре array
- */
-function slice(array, from, to) {
-}
-
-/*
- Задание 6 *:
-
- Функция принимает объект и должна вернуть Proxy для этого объекта
- Proxy должен перехватывать все попытки записи значений свойств и возводить это значение в квадрат
- */
-function createProxy(obj) {
-}
+/* При решении задач, пострайтесь использовать отладчик */
 
 export {
-    forEach,
-    map,
-    reduce,
-    upperProps,
-    slice,
-    createProxy
+    isAllTrue,
+    isSomeTrue,
+    returnBadArguments,
+    calculator
 };
