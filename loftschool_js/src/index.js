@@ -128,9 +128,9 @@ function deleteTextNodesRecursive(where) {
         if (grandchild.nodeType === 3){
           child.removeChild(grandchild);
         }
-        deleteTextNodesRecursive(child);
       }
     }
+    deleteTextNodesRecursive(child);
   }
 }
 
@@ -155,8 +155,47 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+  let obj = {
+    tags: {},
+    classes: {},
+    texts: 0
+  };
+  for (var child of root.childNodes) {
+    if (child.nodeType === 3){
+      obj.texts++;
+    } else if (child.nodeType === 1){
+      if (obj.tags.hasOwnProperty(child.tagName)){
+        obj.tags[child.tagName]++;
+      } else {
+        obj.tags[child.tagName] = 1; 
+      }
+      for (var i = 0; i < child.classList.length; i++){
+        if (obj.classes.hasOwnProperty(child.classList[i])){
+          obj.classes[child.classList[i]]++;
+        } else{
+          obj.classes[child.classList[i]] = 1;
+        }
+      }
+    }
+    var childObj = collectDOMStat(child);
+    obj.texts = obj.texts + childObj.texts;
+    for (i=0; i < Object.keys(childObj.classes).length; i++){
+      if (obj.classes.hasOwnProperty(Object.keys(childObj.classes)[i])){
+        obj.classes[Object.keys(childObj.classes)[i]] += childObj.classes[Object.keys(childObj.classes)[i]];
+      } else{
+        obj.classes[Object.keys(childObj.classes)[i]] = childObj.classes[Object.keys(childObj.classes)[i]];
+      }      
+    }
+    for (i=0; i < Object.keys(childObj.tags).length; i++){
+      if (obj.tags.hasOwnProperty(Object.keys(childObj.tags)[i])){
+        obj.tags[Object.keys(childObj.tags)[i]] += childObj.tags[Object.keys(childObj.tags)[i]];
+      } else{
+        obj.tags[Object.keys(childObj.tags)[i]] = childObj.tags[Object.keys(childObj.tags)[i]];
+      }      
+    }    
+  }
+  return obj;
 }
-
 /*
  Задание 8 *:
 
@@ -190,6 +229,25 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+  var mutationObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      var oInsert = { type: 'insert', nodes: [] };
+      var oRemove = { type: 'remove', nodes: [] };
+      if (mutation.addedNodes.length > 0){
+        for (var i=0; i < mutation.addedNodes.length; i++){
+          oInsert.nodes.push(mutation.addedNodes[i]);
+        }
+        fn(oInsert);
+      }        
+      if (mutation.removedNodes.length > 0){
+        for (var i=0; i < mutation.removedNodes.length; i++){
+          oRemove.nodes.push(mutation.removedNodes[i]);
+        }
+        fn(oRemove);
+      }  
+    });
+  });
+  mutationObserver.observe(where, {childList: true, subtree: true});  
 }
 
 export {
