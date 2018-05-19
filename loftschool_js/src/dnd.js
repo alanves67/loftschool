@@ -27,20 +27,23 @@ const homeworkContainer = document.querySelector('#homework-container');
    homeworkContainer.appendChild(newDiv);
  */
 function createDiv() {
-    function randomColor() {
-        var r = Math.floor(Math.random() * 256);
-        var g = Math.floor(Math.random() * 256);
-        var b = Math.floor(Math.random() * 256);
-        return "rgb(" + r + "," + g + "," + b + ")";
-    }
-    var newDiv = document.createElement('div');
-    newDiv.className = "draggable-div";
-    newDiv.style.color = randomColor();
-    newDiv.style.backgroundColor = randomColor();
-    newDiv.style.top =  Math.floor(Math.random() * 600) + "px";
-    newDiv.style.left =  Math.floor(Math.random() * 1200) + "px";
-    newDiv.style.width =  Math.floor(Math.random() * 1200) + "px";
-    newDiv.style.height =  Math.floor(Math.random() * 600) + "px";
+  function randomColor() {
+    var r = Math.floor(Math.random() * 256);
+    var g = Math.floor(Math.random() * 256);
+    var b = Math.floor(Math.random() * 256);
+    return "rgb(" + r + "," + g + "," + b + ")";
+  }
+  var newDiv = document.createElement('div');
+  newDiv.className = "draggable-div";
+  newDiv.style.color = randomColor();
+  newDiv.style.backgroundColor = randomColor();
+  newDiv.style.top =  Math.floor(Math.random() * 600) + "px";
+  newDiv.style.left =  Math.floor(Math.random() * 1200) + "px";
+  newDiv.style.width =  Math.floor(Math.random() * 1200) + "px";
+  newDiv.style.height =  Math.floor(Math.random() * 600) + "px";
+  newDiv.style.position = 'absolute';
+  newDiv.draggable = true;
+  homeworkContainer.appendChild(newDiv);
   return newDiv;
 }
 
@@ -53,6 +56,29 @@ function createDiv() {
    addListeners(newDiv);
  */
 function addListeners(target) {
+  var bMouseDownFlag = false;
+  target.addEventListener('dragstart', e => {
+    bMouseDownFlag = true;
+    var shiftX = e.pageX - (target.getBoundingClientRect().left + pageXOffset);
+    var shiftY = e.pageY - (target.getBoundingClientRect().top + pageYOffset);
+
+    function moveAt(e) {
+      target.style.left = e.pageX - shiftX + 'px';
+      target.style.top = e.pageY - shiftY + 'px';
+    }
+
+    document.addEventListener( 'drop', e => {
+        if (bMouseDownFlag) {
+            e.preventDefault();
+            moveAt(e);
+        }
+    })
+    document.addEventListener( 'dragover', e => {
+        if (bMouseDownFlag) {
+            e.preventDefault();
+        }
+    });
+  });  
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
