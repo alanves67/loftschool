@@ -55,6 +55,11 @@ function loadTowns() {
       req.addEventListener('abort', reject);
     });
     req.send();
+    /*
+    setTimeout( () => {
+      reject();
+    }, 5000);    
+    */
   });
 }
 
@@ -108,11 +113,28 @@ function createTownDiv(town){
   return div;
 }
 var p = loadTowns();
-p.then( towns => {
+p
+  .then( towns => {
     loadingBlock.style="display: none;"
     filterBlock.style="display: true;"
     return towns;
-})
+  })
+  .catch( () => {
+    loadingBlock.innerHTML = "Не удалось загрузить города";
+    var button = document.createElement('button');
+    button.id = "loadButton";
+    button.textContent = "Загрузить повторно";
+    loadingBlock.appendChild(button);
+    button.addEventListener('click', function(e){
+        p = loadTowns();
+        p
+          .then( towns => {
+          loadingBlock.style="display: none;"
+          filterBlock.style="display: true;"
+          return towns;
+        })
+    })
+  })  
 
 export {
     loadTowns,
