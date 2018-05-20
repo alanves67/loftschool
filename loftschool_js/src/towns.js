@@ -37,6 +37,25 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+  return new Promise( (resolve, reject) => {
+    const req = new XMLHttpRequest();
+    req.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json', true);
+    req.addEventListener('load', () => {
+      if (req.status < 400){
+        resolve( JSON.parse(req.responseText).sort(function(obj1, obj2) {
+            if (obj1.name < obj2.name) return -1;
+            if (obj1.name > obj2.name) return 1;
+            return 0;
+          })
+        );
+      } else{
+        reject();
+      }
+      req.addEventListener('error', reject);
+      req.addEventListener('abort', reject);
+    });
+    req.send();
+  });
 }
 
 /*
@@ -51,6 +70,12 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
+  if (full.toUpperCase().indexOf(chunk.toUpperCase()) > -1){
+    return true;
+  } 
+  else {
+    return false;
+  }
 }
 
 /* Блок с надписью "Загрузка" */
@@ -63,8 +88,31 @@ const filterInput = homeworkContainer.querySelector('#filter-input');
 const filterResult = homeworkContainer.querySelector('#filter-result');
 
 filterInput.addEventListener('keyup', function() {
-    // это обработчик нажатия кливиш в текстовом поле
+  // это обработчик нажатия кливиш в текстовом поле
+  filterResult.innerHTML = '';
+  p.then( towns => {
+    if (filterInput.value){
+      for(var town of towns){
+          if (isMatching(town.name, filterInput.value)) {
+              var townDiv = createTownDiv(town);
+              filterResult.appendChild(townDiv);
+          }
+      }
+    }
+    return towns;
+  })
 });
+function createTownDiv(town){
+  var div = document.createElement('div');
+  div.textContent = town.name;
+  return div;
+}
+var p = loadTowns();
+p.then( towns => {
+    loadingBlock.style="display: none;"
+    filterBlock.style="display: true;"
+    return towns;
+})
 
 export {
     loadTowns,
