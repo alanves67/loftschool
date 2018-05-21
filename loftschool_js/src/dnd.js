@@ -57,27 +57,30 @@ function createDiv() {
  */
 function addListeners(target) {
   var bMouseDownFlag = false;
-  target.addEventListener('dragstart', e => {
-    bMouseDownFlag = true;
-    var shiftX = e.pageX - (target.getBoundingClientRect().left + pageXOffset);
-    var shiftY = e.pageY - (target.getBoundingClientRect().top + pageYOffset);
+  homeworkContainer.addEventListener('dragstart', e => {
+    if (e.target == target){
+      bMouseDownFlag = true;
+      var shiftX = e.pageX - (target.getBoundingClientRect().left + pageXOffset);
+      var shiftY = e.pageY - (target.getBoundingClientRect().top + pageYOffset);
 
-    function moveAt(e) {
-      target.style.left = e.pageX - shiftX + 'px';
-      target.style.top = e.pageY - shiftY + 'px';
+      function moveAt(e) {
+        target.style.left = e.pageX - shiftX + 'px';
+        target.style.top = e.pageY - shiftY + 'px';
+      }
+
+      document.addEventListener( 'drop', e => {
+          if (bMouseDownFlag) {
+              e.preventDefault();
+              bMouseDownFlag = false;
+              moveAt(e);
+          }
+      })
+      document.addEventListener( 'dragover', e => {
+          if (bMouseDownFlag) {
+              e.preventDefault();
+          }
+      });
     }
-
-    document.addEventListener( 'drop', e => {
-        if (bMouseDownFlag) {
-            e.preventDefault();
-            moveAt(e);
-        }
-    })
-    document.addEventListener( 'dragover', e => {
-        if (bMouseDownFlag) {
-            e.preventDefault();
-        }
-    });
   });  
 }
 
