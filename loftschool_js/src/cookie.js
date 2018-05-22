@@ -45,8 +45,51 @@ const listTable = homeworkContainer.querySelector('#list-table tbody');
 
 filterNameInput.addEventListener('keyup', function() {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    drawTable();
 });
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
+    document.cookie = `${addNameInput.value}=${addValueInput.value}`;
+    drawTable();
 });
+
+listTable.addEventListener('click', (e) => {
+  if (e.target.tagName === "BUTTON"){
+    var cookie_name = e.target.parentNode.parentNode.firstChild.innerText;
+    document.cookie = `${cookie_name}=; expires=Fri, Sat, 01 Jan 2000 00:00:00 GMT`;
+    drawTable();
+  }
+});
+
+drawTable();
+
+function getCookies() {
+  return document.cookie.split("; ").reduce((prev, current) => {
+    var [name, value] = current.split("=");
+    prev[name] = value;
+    return prev;
+  }, {});
+}
+function isMatching(full, chunk) {
+  if (full.indexOf(chunk) > -1){
+    return true;
+  } 
+  else {
+    return false;
+  }
+}
+function drawTable(){
+  var cookies = getCookies();
+  listTable.innerHTML = '';
+  if (Object.keys(cookies)[0]){
+    for (var name in cookies){
+      if (isMatching(name, filterNameInput.value) || isMatching(cookies[name], filterNameInput.value)) {
+          var row = listTable.insertRow(0);
+          row.insertCell(0).innerHTML = name;
+          row.insertCell(1).innerHTML = cookies[name];
+          row.insertCell(2).innerHTML = '<button class="delete_button" id="button"' + name + '>удалить</button>';
+      }
+    }
+  }
+}
