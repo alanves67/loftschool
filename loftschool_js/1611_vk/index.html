@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.js"></script>
+        <script src="http://vk.com/js/api/openapi.js" type="text/javascript"></script>
+        <style>
+            body {
+                font: 18px Helvetica;
+                display: flex;
+                flex-wrap: wrap;
+                margin: 0 10px 10px 0;
+            }
+
+            .friends {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .friend {
+                font: 16px Helvetica;
+                width: 100%;
+                margin: 0 10px 10px 0;
+                text-align: left;
+                background-color: whitesmoke; 
+            }
+
+            .friend img {
+                border-radius: 50%;
+            }
+
+            .selFriends{
+                left: 0; top: 0; width: 100%; font: 16px Helvetica;
+                float: left; 
+                position: relative;
+                z-index:2;
+            }
+
+            .left { position: absolute; left: 0; top: 0; width: 50%; font: 16px Helvetica;}
+            .right { position: absolute; right: 0; top: 0; width: 50%; font: 16px Helvetica;}
+            .filter {font: 16px Helvetica; width: 98%;}
+            .button {border-width: 0; background-color: white; font: 16px Helvetica; color: gray; font-weight: bold;}
+        </style>
+    </head>
+    <body>
+        <div id="selFriends" class="selFriends">Выберите друзей
+                <!--input type="button" value="Сохранить" id="safeButton"/-->
+                <button id="safeButton">Сохранить</button>
+        </div> 
+        <!--div id="selFriends2" class="selFriends">
+                    <button id="loadButton">Загрузить</button>
+        </div-->    
+        <div class="left">
+            <div class="container">
+                <h4 id="headerInfo">Ваши друзья</h4>
+                <div id="filter-block1"><input type="text" class="filter" id="filter-name-input1" placeholder="Начните вводить имя друга"></div>
+                <div id="results"></div>
+            </div>
+            <script id="user-template" type="text/x-handlebars-template">
+            <div class="friends" id="friends1">
+                {{#each items}}
+                <div class="friend" draggable = "true">
+                    <div draggable = "false">
+                        <img src="{{photo_100}}" width="50" height="50" align="middle" id={{id}} draggable = "false"/>
+                        {{first_name}} {{last_name}}
+                        <button class="button" draggable = "false">+</button>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </script>
+        </div>
+
+        <div class="right">
+            <div class="container">
+                <h4 id="headerInfo">Друзья в списке</h4>
+                <div id="filter-block2"><input type="text" class="filter" id="filter-name-input2" placeholder="Начните вводить имя друга"></div>
+                <div id="results2"></div>
+            </div>
+            <script id="user-template2" type="text/x-handlebars-template">
+                <div class="friends2" id="friends2">
+                    {{#each items}}
+                    <div class="friend" draggable = "true">
+                        <div>
+                            <img src="{{photo_100}}" width="50" height="50" align="middle" draggable = "false"/>
+                            {{first_name}} {{last_name}}
+                            <button class="button" id={{id}} draggable = "false">X</button>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </script>            
+        </div>
+        <script src="./script-8.js"></script>
+        
+    </body>
+</html>
