@@ -28,52 +28,25 @@ function callAPI(method, params) {
     })
 }
 
-        /*selFriends =  document.querySelector('#selFriends');
-        selFriends.addEventListener('click', e => {
-            console.log("target0");
-        });*/
-
-     
 (async () => {
     try {
         if (localStorage.data2 === undefined){
-            console.log("Загружать нечего");
-
             await auth();
-            const [me] = await callAPI('users.get', { name_case: 'gen' });
             const headerInfo = document.querySelector('#headerInfo');
-            //const friends = await callAPI('friends.get', { fields: 'city, country, photo_100' });
             const friends = await callAPI('friends.get', { fields: 'photo_100' });
-    
             var allFriends1 = [];
             for (var i=0; i<friends.count; i++){
                 allFriends1.push(friends.items[i]);
             }
             var allFriends2 = [];
-
         } else{
-            var data1 = JSON.parse(localStorage.data1 || {});
-            var data2 = JSON.parse(localStorage.data2 || {});
-            console.log(data1);
-            console.log(data2);
-            allFriends1 = data1;
-            allFriends2 = data2;
+            var allFriends1 = JSON.parse(localStorage.data1 || {});
+            var allFriends2 = JSON.parse(localStorage.data2 || {});
         }
-        //var data1 = JSON.parse(localStorage.data1) || {};
-        //console.log(localStorage.data1);
-        //var data2 = JSON.parse(localStorage.data2 || {});
-        /*if  (data1 == {} && data2 == {}){
-            console.log("Загружать нечего");
-        }*/
-       
-
         const filterInput1 = document.querySelector('#filter-name-input1');
         const filterInput2 = document.querySelector('#filter-name-input2');
-        
         renderFriends1();
         renderFriends2();
-
-      
 
         function renderFriends1(){
            const friends1 = {
@@ -108,9 +81,7 @@ function callAPI(method, params) {
            
             listFriends1.addEventListener('dragstart', e => {
                 var bMouseDownFlag = false;
-                //var dragItem = null;
-                if (e.target.getAttribute("class")=="friend"){
-                //if (e.target == target){
+                if (e.target.getAttribute("class") == "friend"){
                     bMouseDownFlag = true;
                     var button = e.target.querySelector('.button');
                     document.addEventListener( 'drop', e => {
@@ -130,8 +101,6 @@ function callAPI(method, params) {
             });
         }
 
-        
-        
         function renderFriends2(){
            const friends2 = {
             count: 0,
@@ -160,7 +129,7 @@ function callAPI(method, params) {
             null;
 
             listFriends2 = document.querySelector('#friends2'); 
-            listFriends2.addEventListener('click', (e) => {
+            listFriends2.addEventListener('click', e => {
                 f2(e);
              });
 
@@ -189,24 +158,11 @@ function callAPI(method, params) {
         var listFriends1 = document.querySelector('#friends1'); 
         var listFriends2 = document.querySelector('#friends2');
         var selFriends =  document.querySelector('#selFriends');
-        //var selFriends2 =  document.querySelector('#selFriends2');
         
         selFriends.addEventListener('click', e => {
-            //console.log("Сохранить", allFriends2[0]);
             localStorage.data1 = JSON.stringify(allFriends1);
             localStorage.data2 = JSON.stringify(allFriends2);
-            /*for (var frnd of allFriends2){
-                localStorage[frnd.id] = JSON.stringify(frnd);
-                
-            }*/
         });
-        /*selFriends2.addEventListener('click', e => {
-            //var data = JSON.parse(localStorage[4075491] ||});
-            //console.log("Загрузить", localStorage.data);
-            var data1 = JSON.parse(localStorage.data1 || {});
-            var data2 = JSON.parse(localStorage.data2 || {});
-            console.log("Загрузить", data1);
-         });*/      
 
         function f1(e){
             if (e.target.tagName === "BUTTON"){
@@ -252,4 +208,3 @@ function callAPI(method, params) {
         console.error(e);
     }
 })();
-
