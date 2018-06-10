@@ -160,6 +160,7 @@ function callAPI(method, params) {
         var selFriends =  document.querySelector('#selFriends');
         
         selFriends.addEventListener('click', e => {
+            alert("Пользователи сохранены");
             localStorage.data1 = JSON.stringify(allFriends1);
             localStorage.data2 = JSON.stringify(allFriends2);
         });
@@ -203,7 +204,7 @@ function callAPI(method, params) {
             renderFriends2();
         });
 
-        const isMatching = (full, chunk) => full.indexOf(chunk) > -1;
+        const isMatching = (full, chunk) => full.toLowerCase().indexOf(chunk.toLowerCase()) > -1;
     } catch (e) {
         console.error(e);
     }
